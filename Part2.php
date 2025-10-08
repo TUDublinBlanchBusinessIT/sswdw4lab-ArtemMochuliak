@@ -19,9 +19,22 @@ if (!$conn) {
   die("Connection failed: " . mysqli_connect_error());
 }
 
-$sql = "INSERT INTO member (firstname, surname) VALUES ('john', 'doe')";
-
-mysqli_query($conn, $sql);
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+ 
+    $firstname = mysqli_real_escape_string($conn, $_POST['firstname']);
+    $surname = mysqli_real_escape_string($conn, $_POST['surname']);
+    
+   
+    $sql = "INSERT INTO member (firstname, surname) VALUES ('$firstname', '$surname')";
+    
+    if (mysqli_query($conn, $sql)) {
+        echo "New member added successfully: $firstname $surname";
+    } else {
+        echo "Error: " . mysqli_error($conn);
+    }
+} else {
+    echo "Invalid request method.";
+}
 
 mysqli_close($conn);
 ?>
