@@ -19,21 +19,20 @@ if (!$conn) {
   die("Connection failed: " . mysqli_connect_error());
 }
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
- 
-    $firstname = mysqli_real_escape_string($conn, $_POST['firstname']);
-    $surname = mysqli_real_escape_string($conn, $_POST['surname']);
+$sql = "SELECT firstname, surname FROM member";
+$result = mysqli_query($conn, $sql);
+
+$members = [];
+
+if (mysqli_num_rows($result) > 0) {
+  while($row = mysqli_fetch_assoc($result)) {
     
-   
-    $sql = "INSERT INTO member (firstname, surname) VALUES ('$firstname', '$surname')";
-    
-    if (mysqli_query($conn, $sql)) {
-        echo "New member added successfully: $firstname $surname";
-    } else {
-        echo "Error: " . mysqli_error($conn);
-    }
+    $members[] = $row["firstname"] . " " . $row["surname"];
+  }
+  
+  echo implode(", ", $members);
 } else {
-    echo "Invalid request method.";
+  echo "0 results";
 }
 
 mysqli_close($conn);
